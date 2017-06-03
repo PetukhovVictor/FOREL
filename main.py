@@ -2,11 +2,12 @@
 
 from numpy import genfromtxt
 from pprint import pprint
+from scipy import ndimage
 
 from forel import Forel
 
 # Загружаем data-set.
-data = genfromtxt('data.csv', delimiter=',', dtype=None, skip_header=True)
+data = genfromtxt('data.csv', delimiter=',', dtype=None, skip_header=True, usecols=(1, 2, 3, 4))
 
 forel = Forel(data)
 
@@ -19,6 +20,3 @@ while forel.clustering_not_finish():
 
     # Расчитываем центр масс полученного набора похожих объектов.
     center_object = forel.get_mass_center(same_objects)
-
-    pprint(same_objects)
-    pprint('----------------------')

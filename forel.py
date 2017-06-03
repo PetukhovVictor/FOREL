@@ -5,14 +5,22 @@ import random
 
 from scipy.spatial.distance import cdist
 
-from pprint import pprint
-
 class Forel:
     """ Радиус сферы, внутри которой объекты являются похожими (одного кластера). """
-    RADIUS = 10
+    RADIUS = 15
 
-    """ Срез для измерений кортежа выборки, которые учавствуют в расчетах схожести и центра масс. """
-    SLICE_OBJECT = slice(1, 5)
+    """ Получение центра масс набор объектов (массу каждого считаем равной 1). """
+    @staticmethod
+    def get_mass_center(objects):
+        return sum(objects) / len(objects)
+
+    """ Получение расстояния между двумя объектами в Евклидовом пространстве. """
+    @staticmethod
+    def distance_objects(object1, object2):
+        object1 = np.asarray(tuple(object1)).reshape(1, -1)
+        object2 = np.asarray(tuple(object2)).reshape(1, -1)
+
+        return cdist(object1, object2, 'euclidean')
 
     def __init__(self, data):
         self.data = data
@@ -24,6 +32,7 @@ class Forel:
         index = random.randint(0, len(self.data) - 1)
         rand_object = self.data[index]
         self.data = np.delete(self.data, index, 0)
+
         return rand_object
 
     """ Проверка наличия ещё некластеризованных объектов. """
@@ -33,16 +42,9 @@ class Forel:
     """ Получение похожих объектов. Критерий похожести - расстояние в Евклидовом пространстве. """
     def get_same_objects(self, object):
         same_objects = []
-        first_object = np.asarray(tuple(object))[self.SLICE_OBJECT].reshape(1, -1)
         for row in self.data:
-            second_object = np.asarray(tuple(row))[self.SLICE_OBJECT].reshape(1, -1)
-            distance = cdist(first_object, second_object, 'euclidean')
+            distance = self.distance_objects(object, row)
             if distance <= self.RADIUS:
-                same_objects.append(row)
-        return same_objects
+                same_objects.append(list(row))
 
-    """ Получение похожих объектов. Критерий похожести - расстояние в Евклидовом пространстве. """
-    def get_mass_center(self, objects):
-
-        return None
-
+        return np.asarray(same_objects)
