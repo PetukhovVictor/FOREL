@@ -3,6 +3,7 @@
 from numpy import genfromtxt
 
 from algorithm.forel import Forel
+from pprint import pprint
 
 # Загружаем data-set.
 data = genfromtxt('data/cars.csv', delimiter=',', dtype=None, skip_header=True, usecols=(1, 2, 3, 4))
@@ -38,3 +39,5 @@ while forel.clustering_not_finish():
 
     # Записываем кластеризованные объекты в результирующий массив.
     clustered_objects.append(same_objects)
+
+pprint(clustered_objects)
