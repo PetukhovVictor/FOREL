@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from numpy import genfromtxt
 from pprint import pprint
 
-from forel import Forel
+from numpy import genfromtxt
+
+from algorithm.forel import Forel
 
 # Загружаем data-set.
 data = genfromtxt('data/cars.csv', delimiter=',', dtype=None, skip_header=True, usecols=(1, 2, 3, 4))
