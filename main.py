@@ -2,7 +2,6 @@
 
 from numpy import genfromtxt
 from pprint import pprint
-from scipy import ndimage
 
 from forel import Forel
 
@@ -10,6 +9,8 @@ from forel import Forel
 data = genfromtxt('data.csv', delimiter=',', dtype=None, skip_header=True, usecols=(1, 2, 3, 4))
 
 forel = Forel(data)
+
+clustered_objects = []
 
 while forel.clustering_not_finish():
     # Извлекаем случайный элемент из выборки.
@@ -19,4 +20,21 @@ while forel.clustering_not_finish():
     same_objects = forel.get_same_objects(currently_object)
 
     # Расчитываем центр масс полученного набора похожих объектов.
-    center_object = forel.get_mass_center(same_objects)
+    if len(same_objects) == 0:
+        center_object = currently_object
+    else:
+        center_object = forel.get_mass_center(same_objects)
+
+    # Стабилизируем центр масс.
+    while forel.distance_objects(currently_object, center_object) > 1:
+        currently_object = center_object
+        same_objects = forel.get_same_objects(currently_object)
+        center_object = forel.get_mass_center(same_objects)
+
+    # Очищаем кластеризованные объекты из выборки.
+    forel.remove_objects(same_objects)
+
+    # Записываем кластеризованные объекты в результирующий массив.
+    clustered_objects.append(same_objects)
+
+pprint(clustered_objects)

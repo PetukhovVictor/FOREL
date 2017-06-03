@@ -5,6 +5,8 @@ import random
 
 from scipy.spatial.distance import cdist
 
+from pprint import pprint
+
 class Forel:
     """ Радиус сферы, внутри которой объекты являются похожими (одного кластера). """
     RADIUS = 15
@@ -20,7 +22,7 @@ class Forel:
         object1 = np.asarray(tuple(object1)).reshape(1, -1)
         object2 = np.asarray(tuple(object2)).reshape(1, -1)
 
-        return cdist(object1, object2, 'euclidean')
+        return cdist(object1, object2, 'euclidean')[0][0]
 
     def __init__(self, data):
         self.data = data
@@ -48,3 +50,7 @@ class Forel:
                 same_objects.append(list(row))
 
         return np.asarray(same_objects)
+
+    """ Удаление даданных объектов из выборки. """
+    def remove_objects(self, objects):
+        self.data = np.delete(self.data, objects)
