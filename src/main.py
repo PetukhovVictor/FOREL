@@ -6,7 +6,7 @@ from pprint import pprint
 from forel import Forel
 
 # Загружаем data-set.
-data = genfromtxt('data.csv', delimiter=',', dtype=None, skip_header=True, usecols=(1, 2, 3, 4))
+data = genfromtxt('data/cars.csv', delimiter=',', dtype=None, skip_header=True, usecols=(1, 2, 3, 4))
 
 forel = Forel(data)
 
