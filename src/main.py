@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from pprint import pprint
-
 from numpy import genfromtxt
 
 from algorithm.forel import Forel
@@ -9,7 +7,10 @@ from algorithm.forel import Forel
 # Загружаем data-set.
 data = genfromtxt('data/cars.csv', delimiter=',', dtype=None, skip_header=True, usecols=(1, 2, 3, 4))
 
-forel = Forel(data)
+# Радиус сферы, внутри которой объекты будут считаться похожими (из одного кластера).
+RADIUS = 15
+
+forel = Forel(data, RADIUS)
 
 clustered_objects = []
 
@@ -37,5 +38,3 @@ while forel.clustering_not_finish():
 
     # Записываем кластеризованные объекты в результирующий массив.
     clustered_objects.append(same_objects)
-
-pprint(clustered_objects)

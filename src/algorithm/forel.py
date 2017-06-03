@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from scipy.spatial.distance import cdist
 import numpy as np
 import random
 
-from scipy.spatial.distance import cdist
-
-from pprint import pprint
-
 class Forel:
-    """ Радиус сферы, внутри которой объекты являются похожими (одного кластера). """
-    RADIUS = 15
-
     """ Получение центра масс набор объектов (массу каждого считаем равной 1). """
     @staticmethod
     def get_mass_center(objects):
@@ -24,8 +18,9 @@ class Forel:
 
         return cdist(object1, object2, 'euclidean')[0][0]
 
-    def __init__(self, data):
+    def __init__(self, data, radius):
         self.data = data
+        self.radius = radius
 
     """ Получение и извлечение случайного объекта из выборки. """
     def get_rand_object(self):
@@ -46,7 +41,7 @@ class Forel:
         same_objects = []
         for row in self.data:
             distance = self.distance_objects(object, row)
-            if distance <= self.RADIUS:
+            if distance <= self.radius:
                 same_objects.append(list(row))
 
         return np.asarray(same_objects)
