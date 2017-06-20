@@ -49,3 +49,31 @@ class Forel:
     """ Удаление даданных объектов из выборки. """
     def remove_objects(self, objects):
         self.data = np.delete(self.data, objects)
+
+    def run(self):
+        clustered_objects = []
+
+        while self.clustering_not_finish():
+            # Извлекаем случайный элемент из выборки.
+            currently_object = self.get_rand_object()
+
+            # Получаем похоже на него объекты (находящиеся на расстоянии менее заданного).
+            same_objects = self.get_same_objects(currently_object)
+
+            # Расчитываем центр масс полученного набора похожих объектов.
+            if len(same_objects) == 0:
+                center_object = currently_object
+            else:
+                center_object = self.get_mass_center(same_objects)
+
+            # Стабилизируем центр масс.
+            while self.distance_objects(currently_object, center_object) > 1:
+                currently_object = center_object
+                same_objects = self.get_same_objects(currently_object)
+                center_object = self.get_mass_center(same_objects)
+
+            # Очищаем кластеризованные объекты из выборки.
+            self.remove_objects(same_objects)
+
+            # Записываем кластеризованные объекты в результирующий массив.
+            clustered_objects.append(same_objects)

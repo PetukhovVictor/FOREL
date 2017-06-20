@@ -3,41 +3,15 @@
 from numpy import genfromtxt
 
 from algorithm.forel import Forel
-from pprint import pprint
+from algorithm.kmeans import KMeans
 
 # Загружаем data-set.
 data = genfromtxt('data/cars.csv', delimiter=',', dtype=None, skip_header=True, usecols=(1, 2, 3, 4))
 
-# Радиус сферы, внутри которой объекты будут считаться похожими (из одного кластера).
-RADIUS = 15
+kmeans = KMeans(data)
+kmeans.run()
+kmeans.plot(column_1_number=1, column_2_number=2)
 
-forel = Forel(data, RADIUS)
-
-clustered_objects = []
-
-while forel.clustering_not_finish():
-    # Извлекаем случайный элемент из выборки.
-    currently_object = forel.get_rand_object()
-
-    # Получаем похоже на него объекты (находящиеся на расстоянии менее заданного).
-    same_objects = forel.get_same_objects(currently_object)
-
-    # Расчитываем центр масс полученного набора похожих объектов.
-    if len(same_objects) == 0:
-        center_object = currently_object
-    else:
-        center_object = forel.get_mass_center(same_objects)
-
-    # Стабилизируем центр масс.
-    while forel.distance_objects(currently_object, center_object) > 1:
-        currently_object = center_object
-        same_objects = forel.get_same_objects(currently_object)
-        center_object = forel.get_mass_center(same_objects)
-
-    # Очищаем кластеризованные объекты из выборки.
-    forel.remove_objects(same_objects)
-
-    # Записываем кластеризованные объекты в результирующий массив.
-    clustered_objects.append(same_objects)
-
-pprint(clustered_objects)
+# radius - радиус сферы, которой объекты будут считаться похожими (из одного кластера).
+forel = Forel(data, radius=15)
+forel.run()
