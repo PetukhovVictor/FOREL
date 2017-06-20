@@ -15,3 +15,4 @@ kmeans.plot(column_1_number=1, column_2_number=2)
 # radius - радиус сферы, которой объекты будут считаться похожими (из одного кластера).
 forel = Forel(data, radius=15)
 forel.run()
+forel.plot(column_1_number=1, column_2_number=2)

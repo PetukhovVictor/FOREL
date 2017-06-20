@@ -1,13 +1,11 @@
 import numpy as np
 from sklearn.cluster import KMeans as KMeansAlgorithm
-import matplotlib.pyplot as plt
+import src.utils as utils
 
 class KMeans:
     def __init__(self, data):
         self.data = data
         self.data_listed = None
-        self.X = None
-        self.Y = None
         self.kmeans_algorithm = None
 
     def run(self):
@@ -17,9 +15,5 @@ class KMeans:
         self.kmeans_algorithm.predict(samples)
 
     def plot(self, column_1_number, column_2_number):
-        self.X = np.array(self.data_listed)[:, column_1_number]
-        self.Y = np.array(self.data_listed)[:, column_2_number]
-        cs = [self.kmeans_algorithm.labels_[i] for i in range(len(self.kmeans_algorithm.labels_))]
-        plt.scatter(self.X, self.Y, c=cs)
-        plt.title('K-means results visualization')
-        plt.show()
+        utils.plot(self.data_listed, self.kmeans_algorithm.labels_,
+                   column_1_number, column_2_number, title='K-means results visualization')

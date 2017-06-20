@@ -3,6 +3,8 @@
 from scipy.spatial.distance import cdist
 import numpy as np
 import random
+from pprint import pprint
+import src.utils as utils
 
 class Forel:
     """ Получение центра масс набор объектов (массу каждого считаем равной 1). """
@@ -21,6 +23,8 @@ class Forel:
     def __init__(self, data, radius):
         self.data = data
         self.radius = radius
+        self.result = None
+        self.clusters = None
 
     """ Получение и извлечение случайного объекта из выборки. """
     def get_rand_object(self):
@@ -50,8 +54,9 @@ class Forel:
     def remove_objects(self, objects):
         self.data = np.delete(self.data, objects)
 
+    """ Запускаем кластеризацию. """
     def run(self):
-        clustered_objects = []
+        self.clustered_objects = []
 
         while self.clustering_not_finish():
             # Извлекаем случайный элемент из выборки.
@@ -76,4 +81,15 @@ class Forel:
             self.remove_objects(same_objects)
 
             # Записываем кластеризованные объекты в результирующий массив.
-            clustered_objects.append(same_objects)
+            self.clustered_objects.append(same_objects)
+
+        self.result = []
+        self.clusters = []
+        for cluster in range(len(self.clustered_objects)):
+            for row in self.clustered_objects[cluster]:
+                self.result.append(list(row))
+                self.clusters.append(cluster)
+
+    def plot(self, column_1_number, column_2_number):
+        utils.plot(self.result, self.clusters,
+                   column_1_number, column_2_number, title='FOREL results vizualization')
