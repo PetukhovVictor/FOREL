@@ -3,7 +3,6 @@
 from scipy.spatial.distance import cdist
 import numpy as np
 import random
-from pprint import pprint
 import src.utils as utils
 
 class Forel:
@@ -30,6 +29,8 @@ class Forel:
     def get_rand_object(self):
         if len(self.data) == 0:
             return None
+        if len(self.data) == 1:
+            return self.data
         index = random.randint(0, len(self.data) - 1)
         rand_object = self.data[index]
         self.data = np.delete(self.data, index, 0)
@@ -43,16 +44,20 @@ class Forel:
     """ Получение похожих объектов. Критерий похожести - расстояние в Евклидовом пространстве. """
     def get_same_objects(self, object):
         same_objects = []
+        counter = 0
+        indexes = []
         for row in self.data:
             distance = self.distance_objects(object, row)
             if distance <= self.radius:
                 same_objects.append(list(row))
+                indexes.append(counter)
+            counter += 1
 
-        return np.asarray(same_objects)
+        return [indexes, np.asarray(same_objects)]
 
-    """ Удаление даданных объектов из выборки. """
-    def remove_objects(self, objects):
-        self.data = np.delete(self.data, objects)
+    """ Удаление заданных объектов из выборки. """
+    def remove_objects(self, same_object_indexes):
+        self.data = np.delete(self.data, same_object_indexes, 0)
 
     """ Запускаем кластеризацию. """
     def run(self):
@@ -63,7 +68,9 @@ class Forel:
             currently_object = self.get_rand_object()
 
             # Получаем похоже на него объекты (находящиеся на расстоянии менее заданного).
-            same_objects = self.get_same_objects(currently_object)
+            same_objects_info = self.get_same_objects(currently_object)
+            same_object_indexes = same_objects_info[0]
+            same_objects = same_objects_info[1]
 
             # Расчитываем центр масс полученного набора похожих объектов.
             if len(same_objects) == 0:
@@ -72,16 +79,18 @@ class Forel:
                 center_object = self.get_mass_center(same_objects)
 
             # Стабилизируем центр масс.
-            while self.distance_objects(currently_object, center_object) > 1:
+            while self.distance_objects(currently_object, center_object) != 0:
                 currently_object = center_object
-                same_objects = self.get_same_objects(currently_object)
+                same_objects_info = self.get_same_objects(currently_object)
+                same_object_indexes = same_objects_info[0]
+                same_objects = same_objects_info[1]
                 center_object = self.get_mass_center(same_objects)
 
             # Очищаем кластеризованные объекты из выборки.
-            self.remove_objects(same_objects)
+            self.remove_objects(same_object_indexes)
 
             # Записываем кластеризованные объекты в результирующий массив.
-            self.clustered_objects.append(same_objects)
+            self.clustered_objects.append(same_objects_info[1])
 
         self.result = []
         self.clusters = []
